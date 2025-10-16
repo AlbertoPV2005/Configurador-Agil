@@ -1,1 +1,0 @@
-# Configurador-Agil
