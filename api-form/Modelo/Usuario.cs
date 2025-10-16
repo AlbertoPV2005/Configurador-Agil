@@ -1,7 +1,10 @@
-﻿namespace api_form.Modelo
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace api_form.Modelo
 {
     public class Usuario
     {
+        [Key]
         public string DNI { get; set; }
         public string Email { get; set; }
         public string Nombre { get; set; }
