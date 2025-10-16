@@ -4,6 +4,16 @@ using Pomelo.EntityFrameworkCore.MySql;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// Servicio CORS Activo
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirTodo", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
