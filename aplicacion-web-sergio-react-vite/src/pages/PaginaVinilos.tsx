@@ -1,4 +1,4 @@
-// src/pages/Home.tsx
+// src/pages/PaginaVinilos.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { PrimaryButton } from '@fluentui/react';  // Componente de Fluent UI
@@ -10,7 +10,7 @@ interface PostData {  // Tipo para los datos de la API
   body: string;
 }
 
-const Home: React.FC = () => {  // Usa React.FC para tipar el componente
+const PaginaVinilos: React.FC = () => {  // Usa React.FC para tipar el componente
   const [data, setData] = useState<PostData | null>(null);  // useState con tipo
   const [loading, setLoading] = useState<boolean>(true);  // useState con tipo
 
@@ -28,7 +28,7 @@ const Home: React.FC = () => {  // Usa React.FC para tipar el componente
 
   return (
     <div>
-      <h1>Bienvenido a la página de Inicio</h1>
+      <h1>Bienvenido a la página de Vinilos</h1>
       {loading ? (
         <p>Cargando datos...</p>
       ) : (
@@ -41,4 +41,4 @@ const Home: React.FC = () => {  // Usa React.FC para tipar el componente
   );
 };
 
-export default Home;
+export default PaginaVinilos;
