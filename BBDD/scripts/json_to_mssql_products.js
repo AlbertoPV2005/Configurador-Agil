@@ -41,7 +41,7 @@ function mapItemToColumns(item, generoFallback) {
   const nombre = trunc(item.nombre || item.Nombre || item.title || '', 50);
   const unidades = trunc(item.unidades || item.Unidades || item.format || '', 50);
   const artista = trunc(item.artista || item.Artista || item.author || '', 50);
-  const imagen = trunc(item.imagen || item.Imagen || item.image || '', 50);
+  const imagen = trunc(item.imagen || item.Imagen || item.image || '', 150);
   const precio = trunc(item.precio || item.Precio || item.price || '', 50);
   const genero = trunc(item.genero || item.Genero || item.genero_musical || item.genre || generoFallback || '', 50);
   const descripcion = item.descripcion || item.Descripcion || item.description || '';
