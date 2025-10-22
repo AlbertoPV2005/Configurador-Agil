@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/AddVinylScreen.css'; // Importa el archivo CSS
+import { useNavigate } from 'react-router-dom';
 
 interface VinylFormData {
   titulo: string;
@@ -21,6 +22,7 @@ const AddVinylScreen: React.FC = () => {
     descripcion: '',
     imagen: '',
   });
+  const navigate = useNavigate();
 
   const [isEditingImage, setIsEditingImage] = useState(false); // Estado para controlar si se está editando la URL de la imagen
 
@@ -42,17 +44,8 @@ const AddVinylScreen: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setFormData({
-      titulo: '',
-      artista: '',
-      anio: '',
-      genero: '',
-      precio: '',
-      descripcion: '',
-      imagen: '',
-    });
-    setIsEditingImage(false); // Resetear el estado de edición
-  };
+  navigate('/'); // Redireccion a paginavinilos
+};
 
   return (
     <div className="container">
