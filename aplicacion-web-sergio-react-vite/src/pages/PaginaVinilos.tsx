@@ -1,7 +1,7 @@
 // src/pages/PaginaVinilos.tsx
 import React, { useState, useEffect } from 'react';
 import { PrimaryButton } from '@fluentui/react';
-import '../styles/PaginaVinilos.css';
+import '../styles/catalogo.css';
 import vinilosData from './data/vinilos.json';
 
 interface Vinyl {
