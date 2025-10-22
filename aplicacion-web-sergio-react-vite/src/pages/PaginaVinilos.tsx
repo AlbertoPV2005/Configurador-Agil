@@ -1,6 +1,7 @@
 // src/pages/PaginaVinilos.tsx
 import React, { useState, useEffect } from 'react';
 import { PrimaryButton } from '@fluentui/react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/catalogo.css';
 import vinilosData from './data/vinilos.json';
 
@@ -11,6 +12,7 @@ interface Vinyl {
 }
 
 const PaginaVinilos: React.FC = () => {
+  const navigate = useNavigate();
   const [vinilos, setVinilos] = useState<Vinyl[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -30,7 +32,7 @@ const PaginaVinilos: React.FC = () => {
     <div className="pagina-vinilos">
       <div className="encabezado">
         <h1 className="titulo">Lista de registros</h1>
-        <PrimaryButton text="Añadir producto" className="boton-anadir" />
+        <PrimaryButton text="Añadir producto" className="boton-anadir" onClick={() => navigate('/add')} />
       </div>
 
       {loading ? (
