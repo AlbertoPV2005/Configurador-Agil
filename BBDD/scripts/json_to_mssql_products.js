@@ -36,7 +36,7 @@ function makeId(prefix, idx) {
   return `${p}_${idx}`.slice(0, 50);
 }
 
-function mapItemToColumns(item, id, generoFallback) {
+function mapItemToColumns(item, generoFallback) {
   // Mapear claves posibles y normalizar/recortar a 50 chars cuando corresponde
   const nombre = trunc(item.nombre || item.Nombre || item.title || '', 50);
   const unidades = trunc(item.unidades || item.Unidades || item.format || '', 50);
@@ -47,7 +47,6 @@ function mapItemToColumns(item, id, generoFallback) {
   const descripcion = item.descripcion || item.Descripcion || item.description || '';
 
   return {
-    ID: id,
     Nombre: nombre,
     Unidades: unidades,
     Artista: artista,
@@ -101,19 +100,18 @@ fileConfigs.forEach(cfg => {
   const prefix = path.basename(cfg.file, path.extname(cfg.file));
   for (let i = start; i < end; i++) {
     const item = arr[i];
-    // Generar ID: prefix + index (1-based relative al archivo)
-    const id = makeId(prefix, i + 1);
-  const generoFallback = (json.name && String(json.name).trim()) || prefix;
-  const mapped = mapItemToColumns(item, id, generoFallback);
+    const generoFallback = (json.name && String(json.name).trim()) || prefix;
+    const mapped = mapItemToColumns(item, generoFallback);
 
-    const cols = ['ID','Nombre','Unidades','Artista','Imagen','Precio','Genero','Descripcion'];
+    // Quitar 'ID' de columnas porque la tabla tiene IDENTITY
+    const cols = ['Nombre','Unidades','Artista','Imagen','Precio','Genero','Descripcion'];
     const values = cols.map(c => {
       const v = mapped[c];
-      // Si descripcion es demasiado larga, la dejamos completa (VARCHAR(MAX) en la tabla)
       return `'${escapeSql(v)}'`;
     }).join(', ');
 
-    const sql = `INSERT INTO [dbo].[Productos] ([ID],[Nombre],[Unidades],[Artista],[Imagen],[Precio],[Genero],[Descripcion]) VALUES (${values});`;
+    // INSERT sin la columna ID
+    const sql = `INSERT INTO [dbo].[Productos] ([Nombre],[Unidades],[Artista],[Imagen],[Precio],[Genero],[Descripcion]) VALUES (${values});`;
     inserts.push(sql);
     total++;
   }
