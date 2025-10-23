@@ -1,23 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_form.Modelo
 {
+    [Table("Usuarios")]
     public class Usuario
     {
         [Key]
+        [Column("DNI")]
         public string DNI { get; set; }
+        
+        [Column("Email")]
         public string Email { get; set; }
+        
+        [Column("Nombre")]
         public string Nombre { get; set; }
+        
+        [Column("Contrasena")]
         public string Contrasena { get; set; }
-
-        // Constructor con parámetros
-        public Usuario(string dni, string email, string nombre, string contrasena)
-        {
-            DNI = dni;
-            Email = email;
-            Nombre = nombre;
-            Contrasena = contrasena;
-        }
 
         // Constructor vacío (necesario para serialización JSON)
         public Usuario() { }
