@@ -77,7 +77,7 @@ const InfoVinilo: React.FC = () => {
   return (
     <div className="container">
       <div className="formContainer">
-        <h1 className="title">Editar Vinilo</h1>
+        <h1 className="title">Informacion de Vinilo</h1>
 
         <div className="panelsContainer">
           {/* Columna izquierda */}
@@ -90,6 +90,7 @@ const InfoVinilo: React.FC = () => {
                 value={formData.titulo}
                 onChange={handleInputChange}
                 className="input"
+                disabled
               />
             </div>
             <div className="field">
@@ -100,6 +101,7 @@ const InfoVinilo: React.FC = () => {
                 value={formData.artista}
                 onChange={handleInputChange}
                 className="input"
+                disabled
               />
             </div>
             <div className="field">
@@ -110,6 +112,7 @@ const InfoVinilo: React.FC = () => {
                 value={formData.anio}
                 onChange={handleInputChange}
                 className="input"
+                disabled
               />
             </div>
             <div className="field">
@@ -119,11 +122,9 @@ const InfoVinilo: React.FC = () => {
                 value={formData.descripcion}
                 onChange={handleInputChange}
                 className="textarea"
+                disabled
               />
             </div>
-            <button onClick={handleDelete} className="deleteButton">
-              Eliminar Vinilo
-            </button>
           </div>
 
           {/* Columna derecha */}
@@ -148,7 +149,6 @@ const InfoVinilo: React.FC = () => {
                   src={formData.imagen || 'https://pngimg.com/uploads/vinyl/small/vinyl_PNG59.png'}
                   alt="Imagen del Vinilo"
                   className="image"
-                  onClick={() => setIsEditingImage(true)}
                 />
               )}
             </div>
@@ -160,6 +160,7 @@ const InfoVinilo: React.FC = () => {
                 value={formData.genero}
                 onChange={handleInputChange}
                 className="input"
+                disabled
               />
             </div>
             <div className="field">
@@ -170,15 +171,13 @@ const InfoVinilo: React.FC = () => {
                 value={formData.precio}
                 onChange={handleInputChange}
                 className="input"
+                disabled
               />
             </div>
           </div>
         </div>
 
         <div className="buttonContainer">
-          <button onClick={handleSave} className="button addButton">
-            Guardar
-          </button>
           <button onClick={handleCancel} className="button cancelButton">
             Cancelar
           </button>
