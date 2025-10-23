@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AddVinylScreen from './pages/AddVinylScreen';
 import PaginaVinilos from './pages/PaginaVinilos';
 import EditVinilo from './pages/EditVinilo';
+import InfoVinilo from './pages/InfoVinilo';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<PaginaVinilos />} />
         <Route path="/add" element={<AddVinylScreen />} />
         <Route path="/edit/:id" element={<EditVinilo />} /> {/* Agrega esta línea si no la tienes */}
+        <Route path="/:id" element={<InfoVinilo/>} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

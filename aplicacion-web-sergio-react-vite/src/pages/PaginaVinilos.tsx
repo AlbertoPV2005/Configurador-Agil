@@ -119,7 +119,12 @@ const PaginaVinilos: React.FC = () => {
       ) : (
         <div className="lista-vinilos">
           {vinilos.map((vinilo) => (
-            <div key={vinilo.id} className="tarjeta-vinilo">
+            <div
+              key={vinilo.id}
+              className="tarjeta-vinilo"
+              onClick={() => navigate(`/${vinilo.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <img src={vinilo.image} alt={vinilo.title} className="imagen-vinilo" />
               <div className="vinilo-info">
                 <p className="nombre-vinilo">{vinilo.title}</p>
@@ -127,8 +132,11 @@ const PaginaVinilos: React.FC = () => {
                 {usuarioActivo?.tipo === 'Empleado' && (
                   <PrimaryButton
                     text="Editar"
-                    onClick={() => navigate(`/edit/${vinilo.id}`)}
-                    styles={{ root: { fontSize: '12px', padding: '4px 8px' } }} // Estilos opcionales para hacerlo más pequeño
+                    onClick={(e) => {
+                      e.stopPropagation(); // evita que se dispare el click de la tarjeta
+                      navigate(`/edit/${vinilo.id}`);
+                    }}
+                    styles={{ root: { fontSize: '12px', padding: '4px 8px' } }}
                   />
                 )}
               </div>
