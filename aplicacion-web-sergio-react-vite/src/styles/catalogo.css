@@ -1,150 +1,111 @@
-/* 🌐 Estilos base */
-html, body {
+/* Asegura que el HTML, body y el contenedor raíz (#root) permitan scroll */
+html, body, #root {
   margin: 0;
   padding: 0;
-  height: auto;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f9f9f9;
-  box-sizing: border-box;
 }
 
-/* 📄 Página principal */
+/* Contenedor principal */
 .pagina-vinilos {
   padding: 2rem;
+  box-sizing: border-box;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
 }
 
-/* 🧭 Encabezado */
+/* Encabezado con título y botones */
 .encabezado {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
 .titulo {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #333;
+  margin: 0;
 }
 
-/* ➕ Botón añadir */
 .boton-anadir {
   background-color: #0078d4;
   color: white;
-  padding: 0.6rem 1.2rem;
   border: none;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
 }
 
-.boton-anadir:hover {
-  background-color: #005fa3;
-}
-
-/* ⏳ Indicador de carga */
+/* Indicador de carga */
 .cargando {
   text-align: center;
   font-size: 1.2rem;
-  color: #666;
 }
 
-/* 🖼️ Lista de vinilos */
+/* Lista de vinilos en cuadrícula responsive */
 .lista-vinilos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.5rem;
   width: 100%;
 }
 
-/* 💿 Tarjeta individual */
+/* Tarjeta individual */
 .tarjeta-vinilo {
   background: white;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  text-align: center;
-  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-.tarjeta-vinilo:hover {
-  transform: translateY(-4px);
-}
-
+/* Imagen del vinilo */
 .imagen-vinilo {
   width: 100%;
   height: auto;
   border-radius: 4px;
-  object-fit: cover;
+}
+
+/* Información del vinilo */
+.vinilo-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 
 .nombre-vinilo {
-  margin-top: 0.5rem;
+  margin: 0;
   font-weight: 500;
-  color: #444;
+  flex: 1;
 }
 
-/* 🔢 Paginación */
+/* Paginación */
 .paginacion {
   margin-top: 2rem;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .numeros-pagina span {
   margin: 0 0.3rem;
   font-weight: bold;
   color: #333;
-  cursor: pointer;
 }
 
-.numeros-pagina span:hover {
-  color: #0078d4;
-}
-
-/* 📱 Responsive: tablets y móviles */
-@media (max-width: 768px) {
-  .encabezado {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .titulo {
-    font-size: 1.5rem;
-  }
-
-  .boton-anadir {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .pagina-vinilos {
-    padding: 1rem;
-  }
-
-  .titulo {
-    font-size: 1.3rem;
-  }
-
-  .lista-vinilos {
-    grid-template-columns: 1fr;
-  }
-
-  .paginacion {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+/* Usuario activo */
+.usuario-activo {
+  margin-bottom: 1rem;
+  font-size: 1rem;
 }
