@@ -169,7 +169,7 @@ const AddVinylScreen: React.FC = () => {
         {/* Botones abajo del todo del formulario */}
         <div className="buttonContainer">
           <button onClick={handleAdd} className="button addButton">
-            Añadir
+            Editar
           </button>
           <button onClick={handleCancel} className="button cancelButton">
             Cancelar
