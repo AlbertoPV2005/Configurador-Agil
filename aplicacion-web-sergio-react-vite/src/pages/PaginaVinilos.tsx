@@ -121,7 +121,17 @@ const PaginaVinilos: React.FC = () => {
           {vinilos.map((vinilo) => (
             <div key={vinilo.id} className="tarjeta-vinilo">
               <img src={vinilo.image} alt={vinilo.title} className="imagen-vinilo" />
-              <p className="nombre-vinilo">{vinilo.title}</p>
+              <div className="vinilo-info">
+                <p className="nombre-vinilo">{vinilo.title}</p>
+                {/* Botón de editar solo visible para empleados */}
+                {usuarioActivo?.tipo === 'Empleado' && (
+                  <PrimaryButton
+                    text="Editar"
+                    onClick={() => navigate(`/edit/${vinilo.id}`)}
+                    styles={{ root: { fontSize: '12px', padding: '4px 8px' } }} // Estilos opcionales para hacerlo más pequeño
+                  />
+                )}
+              </div>
             </div>
           ))}
         </div>

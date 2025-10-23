@@ -5,7 +5,6 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  
 }
 
 .encabezado {
@@ -42,7 +41,7 @@
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  text-align: center;
+  /* Removido text-align: center; para permitir alineación flex en vinilo-info */
 }
 
 .imagen-vinilo {
@@ -51,9 +50,18 @@
   border-radius: 4px;
 }
 
+.vinilo-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem; /* Mantiene el espacio arriba del nombre */
+}
+
 .nombre-vinilo {
-  margin-top: 0.5rem;
+  margin: 0; /* Resetea márgenes para mejor control con flex */
   font-weight: 500;
+  flex: 1; /* Hace que el nombre ocupe el espacio disponible a la izquierda */
 }
 
 .paginacion {
