@@ -1,72 +1,103 @@
-.pagina-vinilos {
-  padding: 2rem;
-  background-color: #f9f9f9;
+/* 🌐 Estilos base */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: 'Segoe UI', sans-serif;
-  width: 100%;
-  max-width: 100%;
+  background-color: #f9f9f9;
   box-sizing: border-box;
 }
 
+/* 📄 Página principal */
+.pagina-vinilos {
+  padding: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 🧭 Encabezado */
 .encabezado {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  gap: 1rem;
 }
 
 .titulo {
   font-size: 1.8rem;
   font-weight: bold;
+  color: #333;
 }
 
+/* ➕ Botón añadir */
 .boton-anadir {
   background-color: #0078d4;
   color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
 }
 
+.boton-anadir:hover {
+  background-color: #005fa3;
+}
+
+/* ⏳ Indicador de carga */
 .cargando {
   text-align: center;
   font-size: 1.2rem;
+  color: #666;
 }
 
+/* 🖼️ Lista de vinilos */
 .lista-vinilos {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
   width: 100%;
 }
 
+/* 💿 Tarjeta individual */
 .tarjeta-vinilo {
   background: white;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  /* Removido text-align: center; para permitir alineación flex en vinilo-info */
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.tarjeta-vinilo:hover {
+  transform: translateY(-4px);
 }
 
 .imagen-vinilo {
   width: 100%;
   height: auto;
   border-radius: 4px;
-}
-
-.vinilo-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-top: 0.5rem; /* Mantiene el espacio arriba del nombre */
+  object-fit: cover;
 }
 
 .nombre-vinilo {
-  margin: 0; /* Resetea márgenes para mejor control con flex */
+  margin-top: 0.5rem;
   font-weight: 500;
-  flex: 1; /* Hace que el nombre ocupe el espacio disponible a la izquierda */
+  color: #444;
 }
 
+/* 🔢 Paginación */
 .paginacion {
   margin-top: 2rem;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 1rem;
@@ -76,4 +107,44 @@
   margin: 0 0.3rem;
   font-weight: bold;
   color: #333;
+  cursor: pointer;
+}
+
+.numeros-pagina span:hover {
+  color: #0078d4;
+}
+
+/* 📱 Responsive: tablets y móviles */
+@media (max-width: 768px) {
+  .encabezado {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .titulo {
+    font-size: 1.5rem;
+  }
+
+  .boton-anadir {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagina-vinilos {
+    padding: 1rem;
+  }
+
+  .titulo {
+    font-size: 1.3rem;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: 1fr;
+  }
+
+  .paginacion {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
