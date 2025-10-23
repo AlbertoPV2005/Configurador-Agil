@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using api_form.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configurar el DbContext con SQL Server
-builder.Services.AddDbContext<api_form.Data.ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));

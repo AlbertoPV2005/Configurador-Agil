@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using api_form.Modelo;
+using api_form.Domain.Entities;
 
-namespace api_form.Data
+namespace api_form.Infrastructure.Data
 {
     public class ApplicationDbContext : DbContext
     {

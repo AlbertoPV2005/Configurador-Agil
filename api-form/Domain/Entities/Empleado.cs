@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace api_form.Modelo
+namespace api_form.Domain.Entities
 {
     [Table("empleado")]
     public class Empleado
