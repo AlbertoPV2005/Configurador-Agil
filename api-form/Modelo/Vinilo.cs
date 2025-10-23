@@ -2,20 +2,29 @@
 {
     public class Vinilo
     {
-        public int Id { get; set; }
-        public string Titulo { get; set; }
-        public string Autor { get; set; }
-        public string Descripcion { get; set; }
+        public string ID_Vinilo { get; set; }
+        public string Nombre { get; set; }
+        public string Unidades { get; set; }
+        public string Artista { get; set; }
         public string Imagen { get; set; }
+        public string Precio { get; set; }
+        public string Genero { get; set; }
+        public string Descripcion { get; set; }
 
-        public Vinilo() { }
+       
 
-        public Vinilo(string titulo, string autor, string descripcion, string imagen)
+        // Constructor con parámetros
+        public Vinilo(string idVinilo, string nombre, string unidades, string artista,
+                      string imagen, string precio, string genero, string descripcion)
         {
-            Titulo = titulo;
-            Autor = autor;
-            Descripcion = descripcion;
+            ID_Vinilo = idVinilo;
+            Nombre = nombre;
+            Unidades = unidades;
+            Artista = artista;
             Imagen = imagen;
+            Precio = precio;
+            Genero = genero;
+            Descripcion = descripcion;
         }
     }
 }

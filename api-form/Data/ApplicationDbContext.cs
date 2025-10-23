@@ -1,5 +1,5 @@
-using api_form.Modelo;
 using Microsoft.EntityFrameworkCore;
+using api_form.Modelo;
 
 namespace api_form.Data
 {
@@ -8,14 +8,11 @@ namespace api_form.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Vinilo> Vinilos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<Usuario>().ToTable("Usuarios");
-            modelBuilder.Entity<Vinilo>().ToTable("Vinilos");
         }
     }
 }
