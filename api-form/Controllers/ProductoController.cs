@@ -35,6 +35,30 @@ namespace api_form.Controllers
             return producto;
         }
 
+
+        [HttpGet("{inicio}-{final}")]
+        public async Task<ActionResult<IEnumerable<Producto>>> GetRangoProductos(int inicio, int final)
+        {
+            if (inicio < 0 || final < 0 || inicio > final)
+            {
+                return BadRequest("El rango especificado no es válido.");
+            }
+
+            var productos = await _context.Productos
+                                          .OrderBy(p => p.ID) // Aseguramos un orden consistente
+                                          .Skip(inicio)       // Omitimos los primeros 'inicio' elementos
+                                          .Take(final - inicio + 1) // Tomamos los elementos dentro del rango
+                                          .ToListAsync();
+
+            if (!productos.Any())
+            {
+                return NotFound("No se encontraron productos en el rango especificado.");
+            }
+
+            return productos;
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(Producto producto)
         {
