@@ -76,6 +76,24 @@ const PaginaVinilos: React.FC = () => {
       };
     });
     setUsuariosCompletos(combinados);
+
+    // Restaurar usuario activo desde localStorage si existe
+    try {
+      const stored = localStorage.getItem('usuarioActivo');
+      if (stored) {
+        const parsed: UsuarioExtendido = JSON.parse(stored);
+        // Comprobar que el usuario aún existe en la lista combinada
+        const existe = combinados.find((u: UsuarioExtendido) => u.dni === parsed.dni);
+        if (existe) {
+          setUsuarioActivo(parsed);
+        } else {
+          localStorage.removeItem('usuarioActivo');
+        }
+      }
+    } catch (e) {
+      // si hay error parsing, borrar para evitar bucles
+      localStorage.removeItem('usuarioActivo');
+    }
   }, []);
 
   const abrirDialogo = () => setIsDialogOpen(true);
@@ -84,6 +102,16 @@ const PaginaVinilos: React.FC = () => {
   const confirmarUsuario = () => {
     const encontrado = usuariosCompletos.find((u) => u.dni === usuarioSeleccionado);
     setUsuarioActivo(encontrado || null);
+    // Persistir selección para que, al navegar fuera y volver, el rol se mantenga
+    try {
+      if (encontrado) {
+        localStorage.setItem('usuarioActivo', JSON.stringify(encontrado));
+      } else {
+        localStorage.removeItem('usuarioActivo');
+      }
+    } catch (e) {
+      // ignorar errores de storage
+    }
     cerrarDialogo();
   };
 

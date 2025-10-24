@@ -41,6 +41,17 @@ const AddVinylScreen: React.FC = () => {
 
   const handleAdd = () => {
     console.log('Añadiendo vinilo:', formData);
+    // Aquí podrías llamar a la API para guardar el vinilo.
+    // Después de guardar, volver a la pantalla anterior.
+    try {
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
+    } catch (e) {
+      navigate('/');
+    }
   };
 
   const handleCancel = () => {

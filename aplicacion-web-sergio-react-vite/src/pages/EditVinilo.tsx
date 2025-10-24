@@ -83,6 +83,16 @@ const AddVinylScreen: React.FC = () => {
       descripcion: '',
       imagen: '',
     });
+    // Después de eliminar, volver a la pantalla anterior si existe, si no ir a '/'
+    try {
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
+    } catch (e) {
+      navigate('/');
+    }
   };
 
   return (

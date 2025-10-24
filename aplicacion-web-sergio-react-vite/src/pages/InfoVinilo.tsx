@@ -71,7 +71,16 @@ const InfoVinilo: React.FC = () => {
 
   const handleDelete = () => {
     console.log('Eliminando vinilo:', id);
-    navigate('/');
+    // Después de eliminar, volver a la pantalla anterior si existe, si no ir a '/'
+    try {
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
+    } catch (e) {
+      navigate('/');
+    }
   };
 
   return (
