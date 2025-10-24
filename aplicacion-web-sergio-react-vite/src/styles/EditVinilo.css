@@ -1,19 +1,23 @@
 /* Estilos generales */
-body {
+html, body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   min-height: 100vh;
   overflow-x: hidden;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Contenedor principal */
 .container {
   position: relative;
-  margin: 0 auto;
   padding: 20px;
-  max-width: 1500px;
+  max-width: 100%;
   text-align: center;
 }
 
@@ -28,8 +32,7 @@ body {
 /* Formulario */
 .formContainer {
   background-color: #fff;
-  padding: 50px;
-  padding-right: 80px;
+  padding: 50px 80px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -43,7 +46,7 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 50px;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .leftPanel, .rightPanel {
@@ -91,7 +94,7 @@ body {
 /* Imagen */
 .image {
   width: 100%;
-  max-width: 196px;
+  max-width: 250px;
   height: auto;
   cursor: pointer;
   border: 1px solid #ccc;
