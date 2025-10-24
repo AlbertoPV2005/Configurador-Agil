@@ -8,41 +8,28 @@ import {
 } from '@fluentui/react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/catalogo.css';
-import vinilosData from './data/vinilos.json';
-import usuarios from './data/usuarios.json';
-import clientes from './data/clientes.json';
-import empleados from './data/empleados.json';
+interface ProductoApi {
+  id: number;
+  nombre: string;
+  artista: string;
+  imagen: string;
+  precio: string;
+}
 
 interface Vinyl {
   id: number;
   title: string;
   image: string;
 }
-
-interface UsuarioBase {
+interface UsuarioTipo {
   dni: string;
-  email: string;
   nombre: string;
-  contrasena: string;
-}
-
-interface Cliente {
-  idCliente: number;
-  membresia: string;
-  dni: string;
-}
-
-interface Empleado {
-  idEmpleado: number;
-  dni: string;
-  cargo: string;
-  sueldo: number;
-}
-
-interface UsuarioExtendido extends UsuarioBase {
+  esCliente: boolean;
+  esEmpleado: boolean;
   tipo: string;
-  detalles: Cliente | Empleado | null;
 }
+
+const API_BASE_URL = 'https://localhost:7019/api';
 
 const PaginaVinilos: React.FC = () => {
   const navigate = useNavigate();
@@ -51,49 +38,62 @@ const PaginaVinilos: React.FC = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<string | null>(null);
-  const [usuariosCompletos, setUsuariosCompletos] = useState<UsuarioExtendido[]>([]);
-  const [usuarioActivo, setUsuarioActivo] = useState<UsuarioExtendido | null>(null);
+  const [usuariosCompletos, setUsuariosCompletos] = useState<UsuarioTipo[]>([]);
+  
+  // Cargar usuario desde localStorage al iniciar
+  const [usuarioActivo, setUsuarioActivoState] = useState<UsuarioTipo | null>(() => {
+    const saved = localStorage.getItem('usuarioActivo');
+    return saved ? JSON.parse(saved) : null;
+  });
 
-  useEffect(() => {
-    // Adaptar vinilos
-    const adaptados: Vinyl[] = vinilosData.map((item, index) => ({
-      id: index + 1,
-      title: `${item.nombre} - ${item.artista}`,
-      image: item.imagen
-    }));
-    setVinilos(adaptados);
-    setLoading(false);
-
-    // Combinar usuarios
-    const combinados: UsuarioExtendido[] = usuarios.map((usuario) => {
-      const cliente = clientes.find((c) => c.dni === usuario.dni);
-      const empleado = empleados.find((e) => e.dni === usuario.dni);
-
-      return {
-        ...usuario,
-        tipo: cliente ? 'Cliente' : empleado ? 'Empleado' : 'Sin rol',
-        detalles: cliente || empleado || null
-      };
-    });
-    setUsuariosCompletos(combinados);
-
-    // Restaurar usuario activo desde localStorage si existe
-    try {
-      const stored = localStorage.getItem('usuarioActivo');
-      if (stored) {
-        const parsed: UsuarioExtendido = JSON.parse(stored);
-        // Comprobar que el usuario aún existe en la lista combinada
-        const existe = combinados.find((u: UsuarioExtendido) => u.dni === parsed.dni);
-        if (existe) {
-          setUsuarioActivo(parsed);
-        } else {
-          localStorage.removeItem('usuarioActivo');
-        }
-      }
-    } catch (e) {
-      // si hay error parsing, borrar para evitar bucles
+  // Función para guardar usuario en localStorage
+  const setUsuarioActivo = (usuario: UsuarioTipo | null) => {
+    setUsuarioActivoState(usuario);
+    if (usuario) {
+      localStorage.setItem('usuarioActivo', JSON.stringify(usuario));
+    } else {
       localStorage.removeItem('usuarioActivo');
     }
+  };
+
+  useEffect(() => {
+    const cargarVinilos = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_BASE_URL}/Producto/0-20`);
+        if (!res.ok) throw new Error('Error al cargar productos');
+        const productos: ProductoApi[] = await res.json();
+
+        const adaptados: Vinyl[] = productos.map((p) => ({
+          id: p.id,
+          title: `${p.nombre} - ${p.artista}`,
+          image: p.imagen,
+        }));
+
+        setVinilos(adaptados);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarVinilos();
+  }, []);
+
+  useEffect(() => {
+    const cargarUsuarios = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/Usuario/tipo`);
+        if (!res.ok) throw new Error('Error al cargar usuarios');
+        const usuarios: UsuarioTipo[] = await res.json();
+        setUsuariosCompletos(usuarios);
+      } catch (e) {
+        console.error('Error cargando usuarios:', e);
+      }
+    };
+
+    cargarUsuarios();
   }, []);
 
   const abrirDialogo = () => setIsDialogOpen(true);
@@ -120,8 +120,7 @@ const PaginaVinilos: React.FC = () => {
       <div className="encabezado">
         <h1 className="titulo">Lista de registros</h1>
 
-        {/* Mostrar botón solo si el usuario activo es empleado */}
-        {usuarioActivo?.tipo === 'Empleado' && (
+        {usuarioActivo?.esEmpleado && (
           <PrimaryButton
             text="Añadir producto"
             className="boton-anadir"
@@ -156,8 +155,7 @@ const PaginaVinilos: React.FC = () => {
               <img src={vinilo.image} alt={vinilo.title} className="imagen-vinilo" />
               <div className="vinilo-info">
                 <p className="nombre-vinilo">{vinilo.title}</p>
-                {/* Botón de editar solo visible para empleados */}
-                {usuarioActivo?.tipo === 'Empleado' && (
+                {usuarioActivo?.esEmpleado && (
                   <PrimaryButton
                     text="Editar"
                     onClick={(e) => {
@@ -186,7 +184,6 @@ const PaginaVinilos: React.FC = () => {
         <PrimaryButton text="Siguiente" />
       </div>
 
-      {/* Modal de selección de usuario */}
       <Dialog
         hidden={!isDialogOpen}
         onDismiss={cerrarDialogo}
