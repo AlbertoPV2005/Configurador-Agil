@@ -8,19 +8,47 @@ body {
   overflow: hidden;
 }
 
-/* Contenedor principal: centra TODO en la pantalla */
+/* Contenedor principal */
 .container {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 1500px;
+  width: 95%;              /* ocupa casi todo el ancho disponible */
+  max-width: 1500px;        /* límite en pantallas grandes */
   text-align: center;
+  box-sizing: border-box;   /* asegura que padding no rompa el ancho */
 }
 
-/* Título */
+/* Tablets */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 90%;   /* más pequeño en pantallas medianas */
+  }
+}
 
+/* Móviles medianos */
+@media (max-width: 768px) {
+  .container {
+    max-width: 95%;   /* ocupa casi todo el ancho */
+    position: relative; /* deja de estar fijo para permitir scroll */
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 20px auto;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .container {
+    max-width: 100%;  /* usa todo el ancho disponible */
+    margin: 10px;
+  }
+}
+
+
+/* Título */
 .title {
   font-size: 2rem;
   color: #333;
@@ -28,56 +56,43 @@ body {
   text-align: left;
 }
 
-
-/* Contenedor del formulario: columnas arriba, botones abajo */
+/* Formulario */
 .formContainer {
   background-color: #fff;
-  padding: 50px;
-  padding-right: 80px;
+  padding: 50px 80px 50px 50px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column; /* Cambiado para que las columnas estén arriba y botones abajo */
+  flex-direction: column;
   gap: 50px;
 }
 
-/* Contenedor de las dos columnas */
+/* Paneles */
 .panelsContainer {
   display: flex;
   flex-direction: row;
-  gap: 50px; /* Espacio entre columnas */
+  gap: 50px;
   justify-content: space-between;
 }
 
-/* Columna izquierda */
-.leftPanel {
+.leftPanel, .rightPanel {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Columna derecha */
-.rightPanel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Campos individuales */
+/* Campos */
 .field {
   display: flex;
-  flex-direction: column; /* Label arriba del input */
-  align-items: flex-start; /* Alinea label e input a la izquierda */
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .label {
- 
   font-size: 20px;
   color: #c2c2c2;
-  text-align: left; /* Alineación a la izquierda */
-  margin-bottom: 10px; /* Espacio entre label e input */
+  margin-bottom: 10px;
 }
 
 .input, .textarea {
@@ -86,9 +101,9 @@ body {
   border-radius: 5px;
   font-size: 1rem;
   transition: border-color 0.3s;
-  color: #000000;
+  color: #000;
   background-color: #f4f4f4;
-  width: 100%; /* Ocupa todo el ancho disponible */
+  width: 100%;
 }
 
 .input:focus, .textarea:focus {
@@ -97,11 +112,11 @@ body {
 }
 
 .textarea {
-  resize:none;
+  resize: none;
   min-height: 80px;
 }
 
-/* Estilo para la imagen */
+/* Imagen */
 .image {
   width: 100%;
   max-width: 196px;
@@ -116,12 +131,12 @@ body {
   border-color: #007bff;
 }
 
-/* Contenedor de botones (abajo del formulario) */
+/* Botones */
 .buttonContainer {
   display: flex;
-  justify-content: center; /* Centrado abajo del formulario */
+  justify-content: center;
   gap: 10px;
-  margin-top: 20px; /* Separación adicional */
+  margin-top: 20px;
 }
 
 .button {
@@ -137,40 +152,118 @@ body {
   background-color: #131313;
   color: white;
   width: 125px;
-  border-radius: 10px; /* Opcional: bordes redondeados */
+  border-radius: 10px;
   margin-right: 40px;
 }
 
-
 .cancelButton {
-  background-color: #ffffff;
+  background-color: #fff;
   color: rgb(73, 73, 73);
-  border: 2px solid rgb(99, 99, 99); /* Añade un borde negro de 2px */
-  border-radius: 10px; /* Opcional: bordes redondeados */
-  padding: 8px 12px;  /* Opcional: espacio interno para mejor apariencia */
+  border: 2px solid rgb(99, 99, 99);
+  border-radius: 10px;
+  padding: 8px 12px;
   width: 125px;
 }
 
+/* -------------------- */
+/* MEDIA QUERIES */
+/* -------------------- */
 
-/* Responsividad: en pantallas pequeñas, apila las columnas verticalmente */
+/* Pantallas grandes (monitores anchos) */
+@media (min-width: 1600px) {
+  .formContainer {
+    padding: 60px 100px;
+    gap: 60px;
+  }
+  .title {
+    font-size: 2.4rem;
+  }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .formContainer {
+    padding: 30px 40px;
+    gap: 30px;
+  }
+  .panelsContainer {
+    gap: 30px;
+  }
+  .title {
+    font-size: 1.6rem;
+  }
+}
+
+/* Móviles medianos */
 @media (max-width: 768px) {
   .container {
-    max-width: 90%;
+    max-width: 95%;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 20px auto;
+  }
+  body {
+    overflow-y: auto;
+    height: auto;
   }
   .formContainer {
     padding: 20px;
+    gap: 25px;
   }
   .panelsContainer {
     flex-direction: column;
     gap: 20px;
-  }
-  .leftPanel, .rightPanel {
-    flex: none;
   }
   .buttonContainer {
     flex-direction: column;
   }
   .button {
     width: 100%;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  .formContainer {
+    padding: 15px;
+    gap: 20px;
+  }
+  .label {
+    font-size: 16px;
+  }
+  .addButton, .cancelButton {
+    width: 100%;
+    margin-right: 0;
+  }
+  .image {
+    max-width: 100%;
+  }
+}
+
+/* Muy pequeños (≤360px) */
+@media (max-width: 360px) {
+  .title {
+    font-size: 1.1rem;
+  }
+  .formContainer {
+    padding: 10px;
+    gap: 15px;
+  }
+  .label {
+    font-size: 14px;
+  }
+  .input, .textarea {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+  .button {
+    font-size: 0.9rem;
+    padding: 8px;
   }
 }

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/EditVinilo.css'; // Importa el archivo CSS
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import vinilosData from './data/vinilos.json';
+
+
 
 interface VinylFormData {
   titulo: string;
   artista: string;
-  anio: string; // Asumiendo que "unidades" es "Año"
+  unidades: string; // Asumiendo que "unidades" es "Año"
   genero: string;
   precio: string;
   descripcion: string;
@@ -13,10 +16,12 @@ interface VinylFormData {
 }
 
 const AddVinylScreen: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+
   const [formData, setFormData] = useState<VinylFormData>({
     titulo: '',
     artista: '',
-    anio: '',
+    unidades: '',
     genero: '',
     precio: '',
     descripcion: '',
@@ -43,6 +48,24 @@ const AddVinylScreen: React.FC = () => {
     console.log('Añadiendo vinilo:', formData);
   };
 
+  useEffect(() => {
+      if (id) {
+        const index = parseInt(id, 10) - 1; // porque en tu catálogo usas index+1
+        const vinilo = vinilosData[index];
+        if (vinilo) {
+          setFormData({
+            titulo: vinilo.nombre,
+            artista: vinilo.artista,
+            unidades: vinilo.unidades || '',
+            genero: vinilo.genero || '',
+            precio: vinilo.precio || '',
+            descripcion: vinilo.descripcion || '',
+            imagen: vinilo.imagen || '',
+          });
+        }
+      }
+    }, [id]);
+
   const handleCancel = () => {
     navigate('/'); // Redireccion a paginavinilos
   };
@@ -54,7 +77,7 @@ const AddVinylScreen: React.FC = () => {
     setFormData({
       titulo: '',
       artista: '',
-      anio: '',
+      unidades: '',
       genero: '',
       precio: '',
       descripcion: '',
@@ -91,11 +114,11 @@ const AddVinylScreen: React.FC = () => {
               />
             </div>
             <div className="field">
-              <label className="label">Año (Unidades):</label> {/* Asumí que "unidades" es "Año"; cámbialo si es otro campo */}
+              <label className="label">Unidades:</label> {/* Asumí que "unidades" es "Año"; cámbialo si es otro campo */}
               <input
                 type="number"
-                name="anio"
-                value={formData.anio}
+                name="unidades"
+                value={formData.unidades}
                 onChange={handleInputChange}
                 className="input"
               />

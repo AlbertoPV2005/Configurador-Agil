@@ -58,8 +58,8 @@ const PaginaVinilos: React.FC = () => {
     // Adaptar vinilos
     const adaptados: Vinyl[] = vinilosData.map((item, index) => ({
       id: index + 1,
-      title: `${item.name} - ${item.band}`,
-      image: item.img
+      title: `${item.nombre} - ${item.artista}`,
+      image: item.imagen
     }));
     setVinilos(adaptados);
     setLoading(false);

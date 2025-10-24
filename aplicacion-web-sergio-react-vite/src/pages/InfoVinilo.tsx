@@ -6,7 +6,7 @@ import vinilosData from './data/vinilos.json';
 interface VinylFormData {
   titulo: string;
   artista: string;
-  anio: string;
+  unidades: string;
   genero: string;
   precio: string;
   descripcion: string;
@@ -20,7 +20,7 @@ const InfoVinilo: React.FC = () => {
   const [formData, setFormData] = useState<VinylFormData>({
     titulo: '',
     artista: '',
-    anio: '',
+    unidades: '',
     genero: '',
     precio: '',
     descripcion: '',
@@ -36,13 +36,13 @@ const InfoVinilo: React.FC = () => {
       const vinilo = vinilosData[index];
       if (vinilo) {
         setFormData({
-          titulo: vinilo.name,
-          artista: vinilo.band,
-          anio: vinilo.year || '',
-          genero: vinilo.genre || '',
-          precio: vinilo.price || '',
-          descripcion: vinilo.description || '',
-          imagen: vinilo.img || '',
+          titulo: vinilo.nombre,
+          artista: vinilo.artista,
+          unidades: vinilo.unidades || '',
+          genero: vinilo.genero || '',
+          precio: vinilo.precio || '',
+          descripcion: vinilo.descripcion || '',
+          imagen: vinilo.imagen || '',
         });
       }
     }
@@ -105,11 +105,11 @@ const InfoVinilo: React.FC = () => {
               />
             </div>
             <div className="field">
-              <label className="label">Año</label>
+              <label className="label">Unidades</label>
               <input
                 type="text"
-                name="anio"
-                value={formData.anio}
+                name="unidades"
+                value={formData.unidades}
                 onChange={handleInputChange}
                 className="input"
                 disabled

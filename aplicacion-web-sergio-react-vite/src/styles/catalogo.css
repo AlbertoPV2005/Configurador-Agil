@@ -32,7 +32,7 @@ html, body, #root {
   font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
-  color:black;
+  color: black;
 }
 
 /* Botón estilo Fluent UI */
@@ -123,4 +123,84 @@ html, body, #root {
 .usuario-activo {
   margin-bottom: 1rem;
   font-size: 1rem;
+}
+
+/* -------------------- */
+/* MEDIA QUERIES */
+/* -------------------- */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .pagina-vinilos {
+    padding: 1.5rem;
+  }
+
+  .titulo {
+    font-size: 1.6rem;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* Móviles medianos */
+@media (max-width: 768px) {
+  .encabezado {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .titulo {
+    font-size: 1.4rem;
+  }
+
+  .boton-anadir {
+    width: 100%;
+    text-align: center;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .tarjeta-vinilo {
+    padding: 0.8rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .pagina-vinilos {
+    padding: 1rem;
+  }
+
+  .titulo {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+  }
+
+  .encabezado {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .vinilo-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .boton-anadir {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
 }
