@@ -36,6 +36,18 @@ namespace api_form.API.Controllers
             return empleado;
         }
 
+        [HttpGet("dni/{dni}")]
+        public async Task<ActionResult<Empleado>> GetEmpleadoPorDni(string dni)
+        {
+            var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.DNI == dni);
+            if (empleado == null)
+            {
+                return NotFound();
+            }
+
+            return empleado;
+        }
+
         [HttpPost]
         public async Task<ActionResult<Empleado>> PostEmpleado(Empleado empleado)
         {

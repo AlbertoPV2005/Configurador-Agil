@@ -36,6 +36,17 @@ namespace api_form.API.Controllers
             return cliente;
         }
 
+        [HttpGet("dni/{dni}")]
+        public async Task<ActionResult<Cliente>> GetClientePorDni(string dni)
+        {
+            var cliente = await _db.Clientes.FirstOrDefaultAsync(e => e.DNI == dni);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return cliente;
+        }
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
