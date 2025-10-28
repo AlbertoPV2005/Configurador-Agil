@@ -8,7 +8,8 @@ import {
 } from '@fluentui/react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/catalogo.css';
-import vinilosData from './data/vinilos.json';
+// ...existing code...
+// removed: import vinilosData from './data/vinilos.json';
 import usuarios from './data/usuarios.json';
 import clientes from './data/clientes.json';
 import empleados from './data/empleados.json';
@@ -55,16 +56,37 @@ const PaginaVinilos: React.FC = () => {
   const [usuarioActivo, setUsuarioActivo] = useState<UsuarioExtendido | null>(null);
 
   useEffect(() => {
-    // Adaptar vinilos
-    const adaptados: Vinyl[] = vinilosData.map((item, index) => ({
-      id: index + 1,
-      title: `${item.nombre} - ${item.artista}`,
-      image: item.imagen
-    }));
-    setVinilos(adaptados);
-    setLoading(false);
+    let mounted = true;
 
-    // Combinar usuarios
+    const fetchVinilos = async () => {
+      try {
+        const res = await fetch('http://localhost:5273/api/Producto');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (!mounted) return;
+
+        // Adaptar respuesta de la API al tipo Vinyl esperado
+        const adaptados: Vinyl[] = (Array.isArray(data) ? data : []).map((item: any, index: number) => ({
+          id: item.id ?? item.idProducto ?? index + 1,
+          title:
+            item.nombre && item.artista
+              ? `${item.nombre} - ${item.artista}`
+              : item.title ?? item.nombre ?? `Vinilo ${index + 1}`,
+          image: item.imagen ?? item.imagenUrl ?? item.image ?? ''
+        }));
+
+        setVinilos(adaptados);
+      } catch (error) {
+        console.error('Error cargando vinilos desde la API:', error);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchVinilos();
+
+    // Combinar usuarios (igual que antes)
     const combinados: UsuarioExtendido[] = usuarios.map((usuario) => {
       const cliente = clientes.find((c) => c.dni === usuario.dni);
       const empleado = empleados.find((e) => e.dni === usuario.dni);
@@ -82,7 +104,6 @@ const PaginaVinilos: React.FC = () => {
       const stored = localStorage.getItem('usuarioActivo');
       if (stored) {
         const parsed: UsuarioExtendido = JSON.parse(stored);
-        // Comprobar que el usuario aún existe en la lista combinada
         const existe = combinados.find((u: UsuarioExtendido) => u.dni === parsed.dni);
         if (existe) {
           setUsuarioActivo(parsed);
@@ -91,9 +112,12 @@ const PaginaVinilos: React.FC = () => {
         }
       }
     } catch (e) {
-      // si hay error parsing, borrar para evitar bucles
       localStorage.removeItem('usuarioActivo');
     }
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const abrirDialogo = () => setIsDialogOpen(true);
@@ -102,16 +126,13 @@ const PaginaVinilos: React.FC = () => {
   const confirmarUsuario = () => {
     const encontrado = usuariosCompletos.find((u) => u.dni === usuarioSeleccionado);
     setUsuarioActivo(encontrado || null);
-    // Persistir selección para que, al navegar fuera y volver, el rol se mantenga
     try {
       if (encontrado) {
         localStorage.setItem('usuarioActivo', JSON.stringify(encontrado));
       } else {
         localStorage.removeItem('usuarioActivo');
       }
-    } catch (e) {
-      // ignorar errores de storage
-    }
+    } catch (e) {}
     cerrarDialogo();
   };
 
@@ -120,7 +141,6 @@ const PaginaVinilos: React.FC = () => {
       <div className="encabezado">
         <h1 className="titulo">Lista de registros</h1>
 
-        {/* Mostrar botón solo si el usuario activo es empleado */}
         {usuarioActivo?.tipo === 'Empleado' && (
           <PrimaryButton
             text="Añadir producto"
@@ -156,12 +176,11 @@ const PaginaVinilos: React.FC = () => {
               <img src={vinilo.image} alt={vinilo.title} className="imagen-vinilo" />
               <div className="vinilo-info">
                 <p className="nombre-vinilo">{vinilo.title}</p>
-                {/* Botón de editar solo visible para empleados */}
                 {usuarioActivo?.tipo === 'Empleado' && (
                   <PrimaryButton
                     text="Editar"
                     onClick={(e) => {
-                      e.stopPropagation(); // evita que se dispare el click de la tarjeta
+                      e.stopPropagation();
                       navigate(`/edit/${vinilo.id}`);
                     }}
                     styles={{ root: { fontSize: '12px', padding: '4px 8px' } }}
@@ -173,20 +192,6 @@ const PaginaVinilos: React.FC = () => {
         </div>
       )}
 
-      <div className="paginacion">
-        <PrimaryButton text="Anterior" disabled />
-        <div className="numeros-pagina">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>...</span>
-          <span>67</span>
-          <span>68</span>
-        </div>
-        <PrimaryButton text="Siguiente" />
-      </div>
-
-      {/* Modal de selección de usuario */}
       <Dialog
         hidden={!isDialogOpen}
         onDismiss={cerrarDialogo}

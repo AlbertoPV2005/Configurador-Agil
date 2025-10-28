@@ -25,6 +25,11 @@ const AddVinylScreen: React.FC = () => {
   const navigate = useNavigate();
 
   const [isEditingImage, setIsEditingImage] = useState(false); // Estado para controlar si se está editando la URL de la imagen
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const MAX_IMAGEN_LENGTH = 200; // límite defensivo: ajusta según la columna DB
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,18 +45,61 @@ const AddVinylScreen: React.FC = () => {
   };
 
   const handleAdd = () => {
-    console.log('Añadiendo vinilo:', formData);
-    // Aquí podrías llamar a la API para guardar el vinilo.
-    // Después de guardar, volver a la pantalla anterior.
-    try {
-      if (window.history.length > 1) {
-        navigate(-1);
-      } else {
-        navigate('/');
-      }
-    } catch (e) {
-      navigate('/');
-    }
+    const save = async () => {
+      setSaving(true);
+      setError(null);
+      try {
+          // Validación local: evitar enviar URLs demasiado largas que truncen en la BD
+          if (formData.imagen && formData.imagen.length > MAX_IMAGEN_LENGTH) {
+            const msg = `La URL de la imagen es demasiado larga (${formData.imagen.length} caracteres). Máximo permitido: ${MAX_IMAGEN_LENGTH}. Acorta la URL o cambia la configuración del servidor.`;
+            console.warn(msg);
+            setSaveError(msg);
+            setSaving(false);
+            return;
+          }
+          // Build payload matching C# Producto model
+          const payload: any = {
+            Nombre: formData.titulo,
+            Unidades: String(formData.anio ?? ''),
+            Artista: formData.artista,
+            Imagen: formData.imagen,
+            Precio: String(formData.precio ?? ''),
+            Genero: formData.genero,
+            Descripcion: formData.descripcion,
+          };
+
+          console.debug('POST payload (Producto):', payload);
+
+          const res = await fetch('http://localhost:5273/api/Producto', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`HTTP ${res.status}: ${text}`);
+          }
+
+          // Opcional: leer respuesta con el recurso creado
+          // const created = await res.json();
+
+          // Ir a la página anterior o al listado
+          try {
+            if (window.history.length > 1) navigate(-1);
+            else navigate('/');
+          } catch (e) {
+            navigate('/');
+          }
+        } catch (err: any) {
+          console.error('Error creando producto:', err);
+          setSaveError(err?.message ?? 'No se pudo crear el vinilo. Comprueba la API.');
+        } finally {
+          setSaving(false);
+        }
+    };
+
+    save();
   };
 
   const handleCancel = () => {
@@ -159,11 +207,13 @@ const AddVinylScreen: React.FC = () => {
         </div>
 
         {/* Botones abajo del todo del formulario */}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {saveError && <p style={{ color: 'red' }}>{saveError}</p>}
         <div className="buttonContainer">
-          <button onClick={handleAdd} className="button addButton">
-            Añadir
+          <button onClick={handleAdd} className="button addButton" disabled={saving}>
+            {saving ? 'Guardando...' : 'Añadir'}
           </button>
-          <button onClick={handleCancel} className="button cancelButton">
+          <button onClick={handleCancel} className="button cancelButton" disabled={saving}>
             Cancelar
           </button>
         </div>

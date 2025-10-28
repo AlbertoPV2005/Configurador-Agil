@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/EditVinilo.css';
-import vinilosData from './data/vinilos.json';
 
 interface VinylFormData {
   titulo: string;
@@ -27,25 +26,48 @@ const InfoVinilo: React.FC = () => {
     imagen: '',
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [isEditingImage, setIsEditingImage] = useState(false);
 
-  // Cargar datos del vinilo según el id
+  // Cargar datos del vinilo según el id desde la API
   useEffect(() => {
-    if (id) {
-      const index = parseInt(id, 10) - 1; // porque en tu catálogo usas index+1
-      const vinilo = vinilosData[index];
-      if (vinilo) {
+    if (!id) return;
+
+    const controller = new AbortController();
+
+    const fetchVinilo = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`http://localhost:5273/api/Producto/${id}`, { signal: controller.signal });
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const vinilo = await res.json();
+
+        // Mapear respuesta API a los campos del form (soportando PascalCase y camelCase)
         setFormData({
-          titulo: vinilo.nombre,
-          artista: vinilo.artista,
-          unidades: vinilo.unidades || '',
-          genero: vinilo.genero || '',
-          precio: vinilo.precio || '',
-          descripcion: vinilo.descripcion || '',
-          imagen: vinilo.imagen || '',
+          titulo: vinilo.Nombre ?? vinilo.nombre ?? vinilo.titulo ?? '',
+          artista: vinilo.Artista ?? vinilo.artista ?? '',
+          unidades: vinilo.Unidades != null ? String(vinilo.Unidades ?? vinilo.unidades) : '',
+          genero: vinilo.Genero ?? vinilo.genero ?? '',
+          precio: vinilo.Precio != null ? String(vinilo.Precio ?? vinilo.precio) : '',
+          descripcion: vinilo.Descripcion ?? vinilo.descripcion ?? '',
+          imagen: vinilo.Imagen ?? vinilo.imagen ?? '',
         });
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Error fetching producto:', err);
+          setError('No se pudo cargar el vinilo. Comprueba la API.');
+        }
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    fetchVinilo();
+
+    return () => controller.abort();
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -82,6 +104,33 @@ const InfoVinilo: React.FC = () => {
       navigate('/');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="formContainer">
+          <h1 className="title">Informacion de Vinilo</h1>
+          <p>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <div className="formContainer">
+          <h1 className="title">Informacion de Vinilo</h1>
+          <p style={{ color: 'red' }}>{error}</p>
+          <div className="buttonContainer">
+            <button onClick={handleCancel} className="button cancelButton">
+              Volver
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
