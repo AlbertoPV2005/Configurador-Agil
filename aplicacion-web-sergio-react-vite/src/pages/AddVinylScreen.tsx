@@ -8,6 +8,8 @@ interface VinylFormData {
   genero: string;
   descripcion: string;
   imagen: string;
+  precio: string;
+  unidades: string;
 }
 
 const AddVinylScreen: React.FC = () => {
@@ -17,7 +19,10 @@ const AddVinylScreen: React.FC = () => {
     genero: '',
     descripcion: '',
     imagen: '',
+    precio: '',
+    unidades: '',
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
 
   const [isEditingImage, setIsEditingImage] = useState(false); // Estado para controlar si se está editando la URL de la imagen
@@ -44,22 +49,49 @@ const AddVinylScreen: React.FC = () => {
     const save = async () => {
       setSaving(true);
       setError(null);
+      setFieldErrors({});
       try {
-          // Validación local: evitar enviar URLs demasiado largas que truncen en la BD
+          // Validación local: campos requeridos
+          const errors: Record<string, string> = {};
+          if (!formData.titulo.trim()) errors.titulo = 'El nombre es obligatorio.';
+          if (!formData.artista.trim()) errors.artista = 'El artista es obligatorio.';
+          if (!formData.genero.trim()) errors.genero = 'El género es obligatorio.';
+          if (!formData.descripcion.trim()) errors.descripcion = 'La descripción es obligatoria.';
+          if (!formData.imagen.trim()) errors.imagen = 'La URL de la imagen es obligatoria.';
+          if (!formData.precio.trim()) errors.precio = 'El precio es obligatorio.';
+          if (!formData.unidades.trim()) errors.unidades = 'Las unidades son obligatorias.';
+
+          // Validación numérica
+          const precioNum = formData.precio.trim() === '' ? NaN : Number(formData.precio);
+          const unidadesNum = formData.unidades.trim() === '' ? NaN : Number(formData.unidades);
+          if (!Number.isFinite(precioNum) || precioNum < 0) errors.precio = 'Precio inválido (>= 0).';
+          if (!Number.isFinite(unidadesNum) || unidadesNum < 0 || !Number.isInteger(unidadesNum)) errors.unidades = 'Unidades inválidas (entero >= 0).';
+
+          if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            setSaveError('Corrige los errores del formulario antes de enviar.');
+            setSaving(false);
+            return;
+          }
+
+          // Validación adicional: evitar enviar URLs demasiado largas
           if (formData.imagen && formData.imagen.length > MAX_IMAGEN_LENGTH) {
-            const msg = `La URL de la imagen es demasiado larga (${formData.imagen.length} caracteres). Máximo permitido: ${MAX_IMAGEN_LENGTH}. Acorta la URL o cambia la configuración del servidor.`;
+            const msg = `La URL de la imagen es demasiado larga (${formData.imagen.length} caracteres). Máximo permitido: ${MAX_IMAGEN_LENGTH}.`;
             console.warn(msg);
             setSaveError(msg);
             setSaving(false);
             return;
           }
-          // Build payload matching C# Producto model
+
+          // Build payload matching C# Producto model - send Precio/Unidades as strings (backend expects strings)
           const payload: any = {
             Nombre: formData.titulo,
             Artista: formData.artista,
             Imagen: formData.imagen,
             Genero: formData.genero,
             Descripcion: formData.descripcion,
+            Precio: formData.precio.trim(),
+            Unidades: formData.unidades.trim(),
           };
 
           console.debug('POST payload (Producto):', payload);
@@ -74,9 +106,6 @@ const AddVinylScreen: React.FC = () => {
             const text = await res.text();
             throw new Error(`HTTP ${res.status}: ${text}`);
           }
-
-          // Opcional: leer respuesta con el recurso creado
-          // const created = await res.json();
 
           // Ir a la página anterior o al listado
           try {
@@ -128,6 +157,36 @@ const AddVinylScreen: React.FC = () => {
                 className="input"
               />
             </div>
+
+              <div className="field">
+                <label className="label">Precio</label>
+                <input
+                  type="number"
+                  name="precio"
+                  value={formData.precio}
+                  onChange={handleInputChange}
+                  className="input"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                />
+                {fieldErrors.precio && <p style={{ color: 'red', marginTop: 6 }}>{fieldErrors.precio}</p>}
+              </div>
+
+              <div className="field">
+                <label className="label">Unidades</label>
+                <input
+                  type="number"
+                  name="unidades"
+                  value={formData.unidades}
+                  onChange={handleInputChange}
+                  className="input"
+                  step="1"
+                  min="0"
+                  placeholder="0"
+                />
+                {fieldErrors.unidades && <p style={{ color: 'red', marginTop: 6 }}>{fieldErrors.unidades}</p>}
+              </div>
 
             <div className="field">
               <label className="label">Descripción:</label> {/* Movido abajo de "Año (Unidades)" */}

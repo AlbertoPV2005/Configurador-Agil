@@ -3,13 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/EditVinilo.css';
 
 interface VinylFormData {
+  id: string;
   titulo: string;
   artista: string;
-  unidades: string;
   genero: string;
-  precio: string;
   descripcion: string;
   imagen: string;
+  precio: string;
+  unidades: string;
 }
 
 const InfoVinilo: React.FC = () => {
@@ -17,13 +18,14 @@ const InfoVinilo: React.FC = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<VinylFormData>({
+    id: '',
     titulo: '',
     artista: '',
-    unidades: '',
     genero: '',
-    precio: '',
     descripcion: '',
     imagen: '',
+    precio: '',
+    unidades: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,13 +49,14 @@ const InfoVinilo: React.FC = () => {
 
         // Mapear respuesta API a los campos del form (soportando PascalCase y camelCase)
         setFormData({
+          id: vinilo.ID != null ? String(vinilo.ID ?? vinilo.id ?? vinilo.idProducto ?? '') : String(vinilo.id ?? vinilo.idProducto ?? ''),
           titulo: vinilo.Nombre ?? vinilo.nombre ?? vinilo.titulo ?? '',
           artista: vinilo.Artista ?? vinilo.artista ?? '',
-          unidades: vinilo.Unidades != null ? String(vinilo.Unidades ?? vinilo.unidades) : '',
           genero: vinilo.Genero ?? vinilo.genero ?? '',
-          precio: vinilo.Precio != null ? String(vinilo.Precio ?? vinilo.precio) : '',
           descripcion: vinilo.Descripcion ?? vinilo.descripcion ?? '',
           imagen: vinilo.Imagen ?? vinilo.imagen ?? '',
+          precio: (vinilo.Precio ?? vinilo.precio ?? '')?.toString?.() ?? '',
+          unidades: (vinilo.Unidades ?? vinilo.unidades ?? '')?.toString?.() ?? '',
         });
       } catch (err: any) {
         if (err.name !== 'AbortError') {
@@ -162,17 +165,31 @@ const InfoVinilo: React.FC = () => {
                 disabled
               />
             </div>
-            <div className="field">
-              <label className="label">Unidades</label>
-              <input
-                type="text"
-                name="unidades"
-                value={formData.unidades}
-                onChange={handleInputChange}
-                className="input"
-                disabled
-              />
-            </div>
+
+              <div className="field">
+                <label className="label">Precio</label>
+                <input
+                  type="text"
+                  name="precio"
+                  value={formData.precio}
+                  onChange={handleInputChange}
+                  className="input"
+                  disabled
+                />
+              </div>
+
+              <div className="field">
+                <label className="label">Unidades</label>
+                <input
+                  type="text"
+                  name="unidades"
+                  value={formData.unidades}
+                  onChange={handleInputChange}
+                  className="input"
+                  disabled
+                />
+              </div>
+
             <div className="field">
               <label className="label">Descripción</label>
               <textarea
@@ -221,17 +238,7 @@ const InfoVinilo: React.FC = () => {
                 disabled
               />
             </div>
-            <div className="field">
-              <label className="label">Precio</label>
-              <input
-                type="text"
-                name="precio"
-                value={formData.precio}
-                onChange={handleInputChange}
-                className="input"
-                disabled
-              />
-            </div>
+
           </div>
         </div>
 

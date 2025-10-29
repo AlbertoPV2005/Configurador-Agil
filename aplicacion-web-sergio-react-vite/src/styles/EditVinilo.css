@@ -1,204 +1,117 @@
-/* Estilos generales */
+/* Global reset and base */
 html, body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #f6f8fb;
+  color: #072a4a;
   min-height: 100vh;
-  overflow-x: hidden;
-  width: 100%;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-/* Contenedor principal */
+/* Page container */
 .container {
-  position: relative;
   padding: 20px;
-  max-width: 100%;
-  text-align: center;
+  max-width: 1100px;
+  margin: 16px auto;
 }
 
-/* Título */
 .title {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: left;
+  font-size: 1.8rem;
+  margin: 0 0 12px 0;
 }
 
-/* Formulario */
+/* Card */
 .formContainer {
-  background-color: #fff;
-  padding: 50px 80px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg,#fff,#fbfdff);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(3,34,63,0.06);
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 16px;
+  min-height: 420px; /* ensures enough vertical space to prevent compression */
+  /* Make the card scrollable when viewport is small so elements don't compress */
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Paneles */
+/* Layout: image left, info right. We don't change markup; use order to reposition */
 .panelsContainer {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 50px;
-  justify-content: center;
-}
-
-.leftPanel, .rightPanel {
-  flex: 1;
-  min-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Campos */
-.field {
-  display: flex;
-  flex-direction: column;
+  gap: 24px;
   align-items: flex-start;
+  width: 100%;
 }
 
-.label {
-  font-size: 1.2rem;
-  color: #c2c2c2;
-  margin-bottom: 10px;
-}
+/* Force rightPanel (image in markup) to appear left */
+.rightPanel { order: 1; flex: 0 0 360px; min-width: 240px; }
+.leftPanel { order: 2; flex: 1 1 60%; min-width: 320px; }
+
+.field { display:flex; flex-direction:column; gap:8px; }
+
+.label { font-size:0.95rem; color:#6b7b8c; }
 
 .input, .textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6eef8;
+  background: #fff;
   font-size: 1rem;
-  background-color: #f4f4f4;
-  width: 100%;
-  color: #000;
-  transition: border-color 0.3s;
+  color: #072a4a;
 }
 
-.input:focus, .textarea:focus {
-  outline: none;
-  border-color: #007bff;
-}
+.textarea { min-height: 120px; resize: vertical; }
 
-.textarea {
-  resize: none;
-  min-height: 80px;
-}
-
-/* Imagen */
+/* Larger image on left */
 .image {
   width: 100%;
-  max-width: 250px;
   height: auto;
+  max-width: 360px;
+  border-radius: 10px;
+  border: 1px solid #e6eef8;
+  box-shadow: 0 8px 20px rgba(2,34,71,0.06);
   cursor: pointer;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border-color 0.3s;
+  object-fit: cover;
 }
 
-.image:hover {
-  border-color: #007bff;
-}
+.image:hover { transform: translateY(-4px); transition: transform 0.18s ease; }
 
-/* Botones */
+/* Actions grouped at the bottom of the card */
 .buttonContainer {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: auto; /* push to bottom */
 }
 
-.button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.button { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.95rem; }
+.addButton { background:#0b2540; color:#fff; }
+.cancelButton { background:#fff; color:#374151; border:1px solid #d1dbe8; }
+.deleteButton { background:#ef4444; color:#fff; }
+
+/* Prevent compression: allow page scrolling and keep minimum sizes */
+.formContainer { overflow: auto; }
+
+/* Thumb styling for visible scrollbar (optional, subtle) */
+.formContainer::-webkit-scrollbar { width: 10px; }
+.formContainer::-webkit-scrollbar-track { background: transparent; }
+.formContainer::-webkit-scrollbar-thumb { background: rgba(7,42,74,0.12); border-radius: 8px; }
+
+/* Responsive: stack on narrow screens; image on top, info below */
+@media (max-width: 900px) {
+  .panelsContainer { flex-direction: column; }
+  .rightPanel { order: 1; width: 100%; max-width: none; }
+  .leftPanel { order: 2; width: 100%; }
+  .image { max-width: 100%; height: auto; }
+  .buttonContainer { justify-content: center; }
 }
 
-.addButton {
-  background-color: #131313;
-  color: white;
-  width: 125px;
-  border-radius: 10px;
-}
-
-.cancelButton {
-  background-color: #ffffff;
-  color: rgb(73, 73, 73);
-  border: 2px solid rgb(99, 99, 99);
-  border-radius: 10px;
-  padding: 8px 12px;
-  width: 125px;
-}
-
-.deleteButton {
-  background-color: red;
-  color: white;
-  margin-top: 1rem;
-  width: 30%;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.deleteButton:hover {
-  background-color: darkred;
-}
-
-/* Responsividad: tablets */
-@media (max-width: 768px) {
-  .formContainer {
-    padding: 30px 20px;
-  }
-
-  .panelsContainer {
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  .buttonContainer {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .button {
-    width: 100%;
-    max-width: 250px;
-  }
-
-  .deleteButton {
-    width: 100%;
-    max-width: 250px;
-  }
-}
-
-/* Responsividad: móviles pequeños */
 @media (max-width: 480px) {
-  .title {
-    font-size: 1.5rem;
-  }
-
-  .label {
-    font-size: 1rem;
-  }
-
-  .formContainer {
-    padding: 20px 15px;
-  }
-
-  .input, .textarea {
-    font-size: 0.9rem;
-  }
+  .formContainer { padding: 12px; }
+  .title { font-size: 1.4rem; }
+  .textarea { min-height: 90px; }
+  .leftPanel { min-width: 100%; }
 }
