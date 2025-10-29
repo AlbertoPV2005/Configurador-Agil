@@ -1,0 +1,42 @@
+# Archivos y carpetas de Visual Studio
+*.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+ 
+# Archivos de configuración y caché
+*.cache
+*.db
+*.log
+ 
+# Salida de compilación
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+ 
+# Archivos de paquetes NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+*.psmdcp
+*.vspscc
+*.vssscc
+ 
+# Archivos de configuración de proyecto
+*.csproj.user
+ 
+# Archivos de diseño y depuración
+*.vscode/
+*.DS_Store
+*.idea/
+*.swp
+ 
+# Archivos temporales
+*.tmp
+*.bak
+*.old
+ 
+*.env
