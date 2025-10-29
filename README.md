@@ -10,7 +10,7 @@ A continuación se presenta el Modelo Entidad-Relación (MER) de la base de dato
 
 A partir de este esquema, se ha conectado la base de datos con el backend y se han creado distintas APIs REST según las necesidades de la aplicación.
 
-Las definiciones de las tablas se encuentran en [SQL/tablas.sql](SQL/tablas.sql)
+Las definiciones de las tablas se encuentran en [SQL/tablas.sql](BBDD/SQL/tablas.sql)
 
 ## Obtención de Datos
 
