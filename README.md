@@ -69,3 +69,18 @@ Scripts disponibles- npm run dev: Inicia el servidor de desarrollo.
 
 - npm run build: Compila la aplicación para producción.
 - npm run lint: Ejecuta ESLint para análisis de código.
+
+## Uso de la aplicación
+
+- Landing page:
+La landing page, PaginaVinilos, permite consultar los vinilos registrados y seleccionar el usuario, dependiendo del usuario elegido, se pueden añadir vinilos adicionales, en el caso de ser un usuario empleado, en el caso del usuario normal, solo puede consultar información de estos.
+
+- EditVinilo:
+La página de edición de vinilos, solo accesible si el usuario elegido es empleado, permite editar los campos del vinilo (titulo, artista, genero, descripcion, imagen, precio y unidades).
+Una vez modificados, permite guardarlos y los actualiza.
+
+- InfoVinilo:
+Accesible para los usuarios base, permite consultar la información del vinilo seleccionado.
+
+- AddVinylScreen:
+También únicamente accesible para usuarios empleados, permite añadir nuevos vinilos a la página, además de poder agregar su imagen y campos mencionados en el punto anterior, una vez que el usuario selecciona la opción de guardar, aplica los cambios y agrega el vinilo nuevo.
