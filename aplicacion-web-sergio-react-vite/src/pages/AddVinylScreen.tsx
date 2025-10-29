@@ -5,9 +5,7 @@ import { useNavigate } from 'react-router-dom';
 interface VinylFormData {
   titulo: string;
   artista: string;
-  anio: string; // Asumiendo que "unidades" es "Año"
   genero: string;
-  precio: string;
   descripcion: string;
   imagen: string;
 }
@@ -16,9 +14,7 @@ const AddVinylScreen: React.FC = () => {
   const [formData, setFormData] = useState<VinylFormData>({
     titulo: '',
     artista: '',
-    anio: '',
     genero: '',
-    precio: '',
     descripcion: '',
     imagen: '',
   });
@@ -60,10 +56,8 @@ const AddVinylScreen: React.FC = () => {
           // Build payload matching C# Producto model
           const payload: any = {
             Nombre: formData.titulo,
-            Unidades: String(formData.anio ?? ''),
             Artista: formData.artista,
             Imagen: formData.imagen,
-            Precio: String(formData.precio ?? ''),
             Genero: formData.genero,
             Descripcion: formData.descripcion,
           };
@@ -134,16 +128,7 @@ const AddVinylScreen: React.FC = () => {
                 className="input"
               />
             </div>
-            <div className="field">
-              <label className="label">Año (Unidades):</label> {/* Asumí que "unidades" es "Año"; cámbialo si es otro campo */}
-              <input
-                type="number"
-                name="anio"
-                value={formData.anio}
-                onChange={handleInputChange}
-                className="input"
-              />
-            </div>
+
             <div className="field">
               <label className="label">Descripción:</label> {/* Movido abajo de "Año (Unidades)" */}
               <textarea
@@ -193,16 +178,7 @@ const AddVinylScreen: React.FC = () => {
                 className="input"
               />
             </div>
-            <div className="field">
-              <label className="label">Precio/U:</label>
-              <input
-                type="number"
-                name="precio"
-                value={formData.precio}
-                onChange={handleInputChange}
-                className="input"
-              />
-            </div>
+
           </div>
         </div>
 
