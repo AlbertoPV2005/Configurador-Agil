@@ -9,10 +9,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import '../styles/catalogo.css';
 // ...existing code...
-// removed: import vinilosData from './data/vinilos.json';
-import usuarios from './data/usuarios.json';
-import clientes from './data/clientes.json';
-import empleados from './data/empleados.json';
+// NOTE: previously this file used local JSON fixtures. They are removed and replaced
+// with API calls to the SQL-backed endpoints as requested.
 
 interface Vinyl {
   id: number;
@@ -54,6 +52,10 @@ const PaginaVinilos: React.FC = () => {
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<string | null>(null);
   const [usuariosCompletos, setUsuariosCompletos] = useState<UsuarioExtendido[]>([]);
   const [usuarioActivo, setUsuarioActivo] = useState<UsuarioExtendido | null>(null);
+  // Estado para el tipo de usuario obtenido desde la API
+  const [userType, setUserType] = useState<string | null>(null);
+  const [userTypeLoading, setUserTypeLoading] = useState<boolean>(true);
+  const [userTypeError, setUserTypeError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -86,34 +88,87 @@ const PaginaVinilos: React.FC = () => {
 
     fetchVinilos();
 
-    // Combinar usuarios (igual que antes)
-    const combinados: UsuarioExtendido[] = usuarios.map((usuario) => {
-      const cliente = clientes.find((c) => c.dni === usuario.dni);
-      const empleado = empleados.find((e) => e.dni === usuario.dni);
+    // Obtener usuarios, clientes y empleados desde la API (SQL) y combinarlos
+    const fetchUsuariosYRelaciones = async () => {
+      try {
+        const [resUsuarios, resClientes, resEmpleados] = await Promise.all([
+          fetch('http://localhost:5273/api/Usuario'),
+          fetch('http://localhost:5273/api/Cliente'),
+          fetch('http://localhost:5273/api/Empleado')
+        ]);
 
-      return {
-        ...usuario,
-        tipo: cliente ? 'Cliente' : empleado ? 'Empleado' : 'Sin rol',
-        detalles: cliente || empleado || null
-      };
-    });
-    setUsuariosCompletos(combinados);
+        const usuariosData = resUsuarios.ok ? await resUsuarios.json() : [];
+        const clientesData = resClientes.ok ? await resClientes.json() : [];
+        const empleadosData = resEmpleados.ok ? await resEmpleados.json() : [];
 
-    // Restaurar usuario activo desde localStorage si existe
-    try {
-      const stored = localStorage.getItem('usuarioActivo');
-      if (stored) {
-        const parsed: UsuarioExtendido = JSON.parse(stored);
-        const existe = combinados.find((u: UsuarioExtendido) => u.dni === parsed.dni);
-        if (existe) {
-          setUsuarioActivo(parsed);
-        } else {
+        const combinados: UsuarioExtendido[] = Array.isArray(usuariosData)
+          ? usuariosData.map((usuario: any) => {
+              const cliente = Array.isArray(clientesData) ? clientesData.find((c: any) => c.dni === usuario.dni) : null;
+              const empleado = Array.isArray(empleadosData) ? empleadosData.find((e: any) => e.dni === usuario.dni) : null;
+
+              return {
+                ...usuario,
+                tipo: cliente ? 'Cliente' : empleado ? 'Empleado' : 'Sin rol',
+                detalles: cliente || empleado || null
+              };
+            })
+          : [];
+
+        if (mounted) setUsuariosCompletos(combinados);
+
+        // Restaurar usuario activo desde localStorage si existe y aún está presente en la lista
+        try {
+          const stored = localStorage.getItem('usuarioActivo');
+          if (stored) {
+            const parsed: UsuarioExtendido = JSON.parse(stored);
+            const existe = combinados.find((u: UsuarioExtendido) => u.dni === parsed.dni);
+            if (existe) {
+              setUsuarioActivo(parsed);
+            } else {
+              localStorage.removeItem('usuarioActivo');
+            }
+          }
+        } catch (e) {
           localStorage.removeItem('usuarioActivo');
         }
+      } catch (err) {
+        console.error('Error cargando usuarios/clientes/empleados desde la API:', err);
+        if (mounted) setUsuariosCompletos([]);
       }
-    } catch (e) {
-      localStorage.removeItem('usuarioActivo');
-    }
+    };
+
+    fetchUsuariosYRelaciones();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Obtener el tipo de usuario desde la API y usarlo para condicionar permisos
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchUserType = async () => {
+      try {
+        setUserTypeLoading(true);
+        const res = await fetch('http://localhost:5273/api/Usuario/tipo');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        // La API puede devolver un string plano o un JSON; intentamos leer como texto y limpiar comillas
+        const raw = await res.text();
+        const tipo = raw ? raw.replace(/^\"|\"$/g, '').trim() : null;
+
+        if (!mounted) return;
+        setUserType(tipo);
+      } catch (err) {
+        console.error('Error obteniendo tipo de usuario desde API:', err);
+        if (mounted) setUserTypeError('No se pudo obtener el tipo de usuario desde la API.');
+      } finally {
+        if (mounted) setUserTypeLoading(false);
+      }
+    };
+
+    fetchUserType();
 
     return () => {
       mounted = false;
@@ -136,12 +191,15 @@ const PaginaVinilos: React.FC = () => {
     cerrarDialogo();
   };
 
+  // Determina si el usuario tiene rol de empleado: ya sea desde la API o desde la selección local
+  const isEmpleado = (userType === 'Empleado') || (usuarioActivo?.tipo === 'Empleado');
+
   return (
     <div className="pagina-vinilos">
       <div className="encabezado">
         <h1 className="titulo">Lista de registros</h1>
 
-        {usuarioActivo?.tipo === 'Empleado' && (
+        {isEmpleado && (
           <PrimaryButton
             text="Añadir producto"
             className="boton-anadir"
@@ -155,6 +213,9 @@ const PaginaVinilos: React.FC = () => {
           onClick={abrirDialogo}
         />
       </div>
+
+  {userTypeLoading && <p className="cargando">Verificando permisos...</p>}
+  {userTypeError && <p style={{ color: 'red' }}>{userTypeError}</p>}
 
       {usuarioActivo && (
         <p className="usuario-activo">
@@ -176,7 +237,7 @@ const PaginaVinilos: React.FC = () => {
               <img src={vinilo.image} alt={vinilo.title} className="imagen-vinilo" />
               <div className="vinilo-info">
                 <p className="nombre-vinilo">{vinilo.title}</p>
-                {usuarioActivo?.tipo === 'Empleado' && (
+                {isEmpleado && (
                   <PrimaryButton
                     text="Editar"
                     onClick={(e) => {

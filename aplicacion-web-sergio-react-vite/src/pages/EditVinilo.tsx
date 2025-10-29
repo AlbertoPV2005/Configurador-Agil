@@ -7,12 +7,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 interface VinylFormData {
   titulo: string;
   artista: string;
-  unidades: string; // Asumiendo que "unidades" es "Año"
   genero: string;
-  precio: string;
   descripcion: string;
   imagen: string;
+  precio: string;
+  unidades: string;
 }
+
 
 const AddVinylScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,11 +21,11 @@ const AddVinylScreen: React.FC = () => {
   const [formData, setFormData] = useState<VinylFormData>({
     titulo: '',
     artista: '',
-    unidades: '',
     genero: '',
-    precio: '',
     descripcion: '',
     imagen: '',
+    precio: '',
+    unidades: '',
   });
   const navigate = useNavigate();
 
@@ -69,20 +70,42 @@ const AddVinylScreen: React.FC = () => {
         return;
       }
       try {
-        // Build payload matching C# Producto model
-        const payload: any = {
+        // Validate precio and unidades (logical validation) but send as strings because backend expects System.String
+        const precioTrim = formData.precio?.toString().trim() ?? '';
+        const unidadesTrim = formData.unidades?.toString().trim() ?? '';
+
+        // If provided, ensure they parse as valid numbers for client-side validation
+        const precioCheck = precioTrim === '' ? 0 : Number(precioTrim);
+        const unidadesCheck = unidadesTrim === '' ? 0 : Number(unidadesTrim);
+
+        if (!Number.isFinite(precioCheck) || precioCheck < 0) {
+          setSaveError('Precio inválido. Debe ser un número mayor o igual a 0.');
+          setSaving(false);
+          return;
+        }
+        if (!Number.isFinite(unidadesCheck) || unidadesCheck < 0 || !Number.isInteger(unidadesCheck)) {
+          setSaveError('Unidades inválidas. Debe ser un entero mayor o igual a 0.');
+          setSaving(false);
+          return;
+        }
+
+        // Build payload wrapped in 'producto' property (server expects this) and send Precio/Unidades as strings
+        const productoPayload: any = {
           Nombre: formData.titulo,
-          Unidades: String(formData.unidades ?? ''),
           Artista: formData.artista,
           Imagen: formData.imagen,
-          Precio: String(formData.precio ?? ''),
           Genero: formData.genero,
           Descripcion: formData.descripcion,
+          Precio: precioTrim === '' ? '0' : precioTrim,
+          Unidades: unidadesTrim === '' ? '0' : unidadesTrim,
         };
 
-        // Optionally include ID if backend expects it
+        // Optionally include ID inside producto if backend expects it
         const idNum = Number(id);
-        if (!Number.isNaN(idNum)) payload.ID = idNum;
+        if (!Number.isNaN(idNum)) productoPayload.ID = idNum;
+
+  // Send producto object directly (server likely expects the Producto at the root)
+  const payload: any = productoPayload;
 
         console.debug('PUT payload (Producto):', payload);
 
@@ -132,11 +155,12 @@ const AddVinylScreen: React.FC = () => {
         setFormData({
           titulo: vinilo.Nombre ?? vinilo.nombre ?? vinilo.titulo ?? '',
           artista: vinilo.Artista ?? vinilo.artista ?? '',
-          unidades: vinilo.Unidades != null ? String(vinilo.Unidades ?? vinilo.unidades) : '',
           genero: vinilo.Genero ?? vinilo.genero ?? '',
-          precio: vinilo.Precio != null ? String(vinilo.Precio ?? vinilo.precio) : '',
           descripcion: vinilo.Descripcion ?? vinilo.descripcion ?? '',
           imagen: vinilo.Imagen ?? vinilo.imagen ?? '',
+          // Map precio/unidades if provided by API (handle number or string)
+          precio: (vinilo.Precio ?? vinilo.precio ?? '')?.toString?.() ?? '',
+          unidades: (vinilo.Unidades ?? vinilo.unidades ?? '')?.toString?.() ?? '',
         });
       } catch (err: any) {
         if (err.name !== 'AbortError') {
@@ -258,16 +282,35 @@ const AddVinylScreen: React.FC = () => {
                 className="input"
               />
             </div>
+
             <div className="field">
-              <label className="label">Unidades:</label> {/* Asumí que "unidades" es "Año"; cámbialo si es otro campo */}
+              <label className="label">Precio</label>
+              <input
+                type="number"
+                name="precio"
+                value={formData.precio}
+                onChange={handleInputChange}
+                className="input"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div className="field">
+              <label className="label">Unidades</label>
               <input
                 type="number"
                 name="unidades"
                 value={formData.unidades}
                 onChange={handleInputChange}
                 className="input"
+                step="1"
+                min="0"
+                placeholder="0"
               />
             </div>
+
             <div className="field">
               <label className="label">Descripción:</label>
               <textarea
@@ -328,16 +371,7 @@ const AddVinylScreen: React.FC = () => {
                 className="input"
               />
             </div>
-            <div className="field">
-              <label className="label">Precio/U:</label>
-              <input
-                type="number"
-                name="precio"
-                value={formData.precio}
-                onChange={handleInputChange}
-                className="input"
-              />
-            </div>
+
           </div>
         </div>
 
