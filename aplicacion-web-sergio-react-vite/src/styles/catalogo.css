@@ -1,0 +1,206 @@
+/* Asegura que el HTML, body y el contenedor raíz permitan scroll */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Contenedor principal */
+.pagina-vinilos {
+  padding: 2rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Encabezado con título y botones */
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.titulo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+  color: black;
+}
+
+/* Botón estilo Fluent UI */
+.boton-anadir {
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.boton-anadir:hover {
+  background-color: #005a9e;
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.3);
+}
+
+/* Indicador de carga */
+.cargando {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* Lista de vinilos en cuadrícula responsive */
+.lista-vinilos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Tarjeta individual con efecto hover */
+.tarjeta-vinilo {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-vinilo:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Imagen del vinilo */
+.imagen-vinilo {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Información del vinilo */
+.vinilo-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.nombre-vinilo {
+  margin: 0;
+  font-weight: 500;
+  flex: 1;
+  color: black;
+}
+
+/* Paginación */
+.paginacion {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.numeros-pagina span {
+  margin: 0 0.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Usuario activo */
+.usuario-activo {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* -------------------- */
+/* MEDIA QUERIES */
+/* -------------------- */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .pagina-vinilos {
+    padding: 1.5rem;
+  }
+
+  .titulo {
+    font-size: 1.6rem;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* Móviles medianos */
+@media (max-width: 768px) {
+  .encabezado {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .titulo {
+    font-size: 1.4rem;
+  }
+
+  .boton-anadir {
+    width: 100%;
+    text-align: center;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .tarjeta-vinilo {
+    padding: 0.8rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .pagina-vinilos {
+    padding: 1rem;
+  }
+
+  .titulo {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+  }
+
+  .encabezado {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lista-vinilos {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .vinilo-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .boton-anadir {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
