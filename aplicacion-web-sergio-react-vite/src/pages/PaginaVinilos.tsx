@@ -8,9 +8,9 @@ import {
 } from '@fluentui/react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/catalogo.css';
-// ...existing code...
-// NOTE: previously this file used local JSON fixtures. They are removed and replaced
-// with API calls to the SQL-backed endpoints as requested.
+import api from '../api/client';
+import type { Producto } from '../api/producto';
+import { UsuarioApi, UsuarioTipoDTO } from '../api/usuario';
 
 interface Vinyl {
   id: number;
@@ -18,30 +18,7 @@ interface Vinyl {
   image: string;
 }
 
-interface UsuarioBase {
-  dni: string;
-  email: string;
-  nombre: string;
-  contrasena: string;
-}
-
-interface Cliente {
-  idCliente: number;
-  membresia: string;
-  dni: string;
-}
-
-interface Empleado {
-  idEmpleado: number;
-  dni: string;
-  cargo: string;
-  sueldo: number;
-}
-
-interface UsuarioExtendido extends UsuarioBase {
-  tipo: string;
-  detalles: Cliente | Empleado | null;
-}
+type UsuarioExtendido = UsuarioTipoDTO;
 
 const PaginaVinilos: React.FC = () => {
   const navigate = useNavigate();
@@ -52,123 +29,31 @@ const PaginaVinilos: React.FC = () => {
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<string | null>(null);
   const [usuariosCompletos, setUsuariosCompletos] = useState<UsuarioExtendido[]>([]);
   const [usuarioActivo, setUsuarioActivo] = useState<UsuarioExtendido | null>(null);
-  // Estado para el tipo de usuario obtenido desde la API
-  const [userType, setUserType] = useState<string | null>(null);
-  const [userTypeLoading, setUserTypeLoading] = useState<boolean>(true);
-  const [userTypeError, setUserTypeError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
     const fetchVinilos = async () => {
       try {
-        const res = await fetch('http://localhost:5273/api/Producto');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        const { data } = await api.get<Producto[]>('/Producto');
 
         if (!mounted) return;
 
-        // Adaptar respuesta de la API al tipo Vinyl esperado
-        const adaptados: Vinyl[] = (Array.isArray(data) ? data : []).map((item: any, index: number) => ({
-          id: item.id ?? item.idProducto ?? index + 1,
-          title:
-            item.nombre && item.artista
-              ? `${item.nombre} - ${item.artista}`
-              : item.title ?? item.nombre ?? `Vinilo ${index + 1}`,
-          image: item.imagen ?? item.imagenUrl ?? item.image ?? ''
+        const adaptados: Vinyl[] = (Array.isArray(data) ? data : []).map((item, index) => ({
+          id: item.id ?? index + 1,
+          title: item.nombre && item.artista ? `${item.nombre} - ${item.artista}` : item.nombre ?? `Vinilo ${index + 1}`,
+          image: item.imagen ?? ''
         }));
 
         setVinilos(adaptados);
       } catch (error) {
-        console.error('Error cargando vinilos desde la API:', error);
+        console.error('Error fetching vinilos:', error);
       } finally {
-        if (mounted) setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchVinilos();
-
-    // Obtener usuarios, clientes y empleados desde la API (SQL) y combinarlos
-    const fetchUsuariosYRelaciones = async () => {
-      try {
-        const [resUsuarios, resClientes, resEmpleados] = await Promise.all([
-          fetch('http://localhost:5273/api/Usuario'),
-          fetch('http://localhost:5273/api/Cliente'),
-          fetch('http://localhost:5273/api/Empleado')
-        ]);
-
-        const usuariosData = resUsuarios.ok ? await resUsuarios.json() : [];
-        const clientesData = resClientes.ok ? await resClientes.json() : [];
-        const empleadosData = resEmpleados.ok ? await resEmpleados.json() : [];
-
-        const combinados: UsuarioExtendido[] = Array.isArray(usuariosData)
-          ? usuariosData.map((usuario: any) => {
-              const cliente = Array.isArray(clientesData) ? clientesData.find((c: any) => c.dni === usuario.dni) : null;
-              const empleado = Array.isArray(empleadosData) ? empleadosData.find((e: any) => e.dni === usuario.dni) : null;
-
-              return {
-                ...usuario,
-                tipo: cliente ? 'Cliente' : empleado ? 'Empleado' : 'Sin rol',
-                detalles: cliente || empleado || null
-              };
-            })
-          : [];
-
-        if (mounted) setUsuariosCompletos(combinados);
-
-        // Restaurar usuario activo desde localStorage si existe y aún está presente en la lista
-        try {
-          const stored = localStorage.getItem('usuarioActivo');
-          if (stored) {
-            const parsed: UsuarioExtendido = JSON.parse(stored);
-            const existe = combinados.find((u: UsuarioExtendido) => u.dni === parsed.dni);
-            if (existe) {
-              setUsuarioActivo(parsed);
-            } else {
-              localStorage.removeItem('usuarioActivo');
-            }
-          }
-        } catch (e) {
-          localStorage.removeItem('usuarioActivo');
-        }
-      } catch (err) {
-        console.error('Error cargando usuarios/clientes/empleados desde la API:', err);
-        if (mounted) setUsuariosCompletos([]);
-      }
-    };
-
-    fetchUsuariosYRelaciones();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  // Obtener el tipo de usuario desde la API y usarlo para condicionar permisos
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchUserType = async () => {
-      try {
-        setUserTypeLoading(true);
-        const res = await fetch('http://localhost:5273/api/Usuario/tipo');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        // La API puede devolver un string plano o un JSON; intentamos leer como texto y limpiar comillas
-        const raw = await res.text();
-        const tipo = raw ? raw.replace(/^\"|\"$/g, '').trim() : null;
-
-        if (!mounted) return;
-        setUserType(tipo);
-      } catch (err) {
-        console.error('Error obteniendo tipo de usuario desde API:', err);
-        if (mounted) setUserTypeError('No se pudo obtener el tipo de usuario desde la API.');
-      } finally {
-        if (mounted) setUserTypeLoading(false);
-      }
-    };
-
-    fetchUserType();
 
     return () => {
       mounted = false;
@@ -191,8 +76,7 @@ const PaginaVinilos: React.FC = () => {
     cerrarDialogo();
   };
 
-  // Determina si el usuario tiene rol de empleado: ya sea desde la API o desde la selección local
-  const isEmpleado = (userType === 'Empleado') || (usuarioActivo?.tipo === 'Empleado');
+  const isEmpleado = usuarioActivo?.esEmpleado === true || usuarioActivo?.tipo === 'Empleado';
 
   return (
     <div className="pagina-vinilos">
@@ -213,9 +97,6 @@ const PaginaVinilos: React.FC = () => {
           onClick={abrirDialogo}
         />
       </div>
-
-  {userTypeLoading && <p className="cargando">Verificando permisos...</p>}
-  {userTypeError && <p style={{ color: 'red' }}>{userTypeError}</p>}
 
       {usuarioActivo && (
         <p className="usuario-activo">
