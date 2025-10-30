@@ -27,11 +27,11 @@ Esta es una aplicación web desarrollada con **React** y **Vite** que gestiona i
         - empleados.json
         - vinilos.json
     - components/ → Componentes reutilizables
-    - AddViniloScreen.tsx
-    - EditViniloScreen.tsx
-    - InfoViniloScreen.tsx
+    - AddVinylScreen.tsx
+    - EditVinilo.tsx
+    - InfoVinilo.tsx
     - PaginaVinilos.tsx
-    - ViniloScreen.tsx
+    - VinylPage.tsx
     - main.tsx → Punto de entrada de la aplicación
   - .gitignore → Archivos ignorados por Git
   - eslint.config.ts → Configuración de ESLint
