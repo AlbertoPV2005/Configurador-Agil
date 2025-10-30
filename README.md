@@ -184,6 +184,7 @@ A partir de este esquema, se ha conectado la base de datos con el backend y se h
 Las definiciones de las tablas se encuentran en estas han sido las siguentes
 <details>
 <summary>Definiciones de las tablas (click para expandir)</summary>
+
 ```sql
 CREATE TABLE [dbo].[Usuarios] (
     [DNI]        VARCHAR (50) NOT NULL,
@@ -220,6 +221,7 @@ CREATE TABLE [dbo].[Productos] (
     PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 ```
+
 </details>
 
 
@@ -329,6 +331,7 @@ Posteriormente, se desarrolló un [script para unificar todos los géneros](http
 Para generar las sentencias de inserción SQL, se ha creado [otro script especializado](https://github.com/AlbertoPV2005/Configurador-Agil/blob/c70b63230a2acc55a0079c43f3cf8fa61bd653db/BBDD/scripts/json_to_mssql_products.js). Este script procesa los datos de los 5 archivos JSON de géneros y permite seleccionar cuántos registros extraer de cada uno, especificando el rango de inicio y fin. Esta funcionalidad permite controlar el número de datos a importar y evitar duplicados al añadir nuevos registros. Las sentencias SQL generadas se almacenan en [un archivo SQL de inserciones](https://github.com/AlbertoPV2005/Configurador-Agil/blob/c70b63230a2acc55a0079c43f3cf8fa61bd653db/BBDD/SQL/Productos_inserts.sql).
 <details>
 <summary>Fichero para insertar datos (click para expandir)</summary>
+
 ```sql
 -- Inserts generados para [dbo].[Productos]
 SET NOCOUNT ON;
@@ -341,6 +344,7 @@ INSERT INTO [dbo].[Productos] ([Nombre],[Unidades],[Artista],[Imagen],[Precio],[
 COMMIT;
 -- Total inserts: 5
 ```
+
 </details>
 
 ## Instalación de la Base de Datos MS SQL Server e Inserción de Datos
