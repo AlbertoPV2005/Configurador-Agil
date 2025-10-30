@@ -149,7 +149,7 @@ La conexión a **SQL Server** se configura en el archivo `appsettings.json` (lí
 
 ```json
 "DefaultConnection": "Server=ITMES5CG0465FTK;Database=master;Integrated Security=True;TrustServerCertificate=True;"
-
+```
 📌 Nota:
 En la parte de Server se debe cambiar ITMES5CG0465FTK por el ID del servidor que se va a utilizar.
 
